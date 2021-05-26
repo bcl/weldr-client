@@ -10,6 +10,7 @@ declare -A __composer_cli_cmds=(
   [sources]="list info add change delete"
   [upload]="list info start log cancel delete reset"
   [providers]="list info show push save delete template"
+  [distros]="list"
   [help]=""
 )
 

@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/osbuild/weldr-client/cmd/composer-cli/blueprints"
 	_ "github.com/osbuild/weldr-client/cmd/composer-cli/compose"
+	_ "github.com/osbuild/weldr-client/cmd/composer-cli/distros"
 	_ "github.com/osbuild/weldr-client/cmd/composer-cli/modules"
 	_ "github.com/osbuild/weldr-client/cmd/composer-cli/projects"
 	"github.com/osbuild/weldr-client/cmd/composer-cli/root"
