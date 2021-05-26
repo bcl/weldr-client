@@ -26,7 +26,21 @@ func TestListComposes(t *testing.T) {
 }
 
 func TestGetComposeTypes(t *testing.T) {
-	types, r, err := testState.client.GetComposeTypes()
+	types, r, err := testState.client.GetComposeTypes("")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, types)
+	assert.Equal(t, 6, len(types))
+	assert.Contains(t, types, "openstack")
+}
+
+func TestGetComposeTypesDistro(t *testing.T) {
+	distros, r, err := testState.client.ListDistros()
+	require.Nil(t, err)
+	require.Nil(t, r)
+	assert.GreaterOrEqual(t, len(distros), 1)
+
+	types, r, err := testState.client.GetComposeTypes(distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, types)

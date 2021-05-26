@@ -86,8 +86,15 @@ func (c Client) ListComposes() ([]ComposeStatusV0, []APIErrorMsg, error) {
 }
 
 // GetComposeTypes returns a list of the compose types
-func (c Client) GetComposeTypes() ([]string, *APIResponse, error) {
-	j, resp, err := c.GetRaw("GET", "/compose/types")
+func (c Client) GetComposeTypes(distro string) ([]string, *APIResponse, error) {
+	var route string
+	if len(distro) > 0 {
+		route = fmt.Sprintf("/compose/types?distro=%s", distro)
+	} else {
+		route = "/compose/types"
+	}
+
+	j, resp, err := c.GetRaw("GET", route)
 	if err != nil {
 		return nil, nil, err
 	}

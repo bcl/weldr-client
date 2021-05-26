@@ -21,14 +21,16 @@ var (
 		RunE:  types,
 		Args:  cobra.NoArgs,
 	}
+	distro string
 )
 
 func init() {
+	typesCmd.Flags().StringVarP(&distro, "distro", "", "", "Distribution")
 	composeCmd.AddCommand(typesCmd)
 }
 
 func types(cmd *cobra.Command, args []string) error {
-	types, resp, err := root.Client.GetComposeTypes()
+	types, resp, err := root.Client.GetComposeTypes(distro)
 	if root.JSONOutput {
 		return nil
 	}
