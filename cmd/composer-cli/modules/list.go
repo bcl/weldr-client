@@ -19,14 +19,16 @@ var (
 		Long:  "List available modules",
 		RunE:  list,
 	}
+	distro string
 )
 
 func init() {
+	listCmd.Flags().StringVarP(&distro, "distro", "", "", "Return results for distribution")
 	modulesCmd.AddCommand(listCmd)
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	modules, resp, err := root.Client.ListModules()
+	modules, resp, err := root.Client.ListModules(distro)
 	if root.JSONOutput {
 		return nil
 	}

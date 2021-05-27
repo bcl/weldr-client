@@ -14,7 +14,21 @@ import (
 )
 
 func TestListModules(t *testing.T) {
-	modules, r, err := testState.client.ListModules()
+	modules, r, err := testState.client.ListModules("")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, modules)
+	assert.GreaterOrEqual(t, len(modules), 2)
+	assert.Equal(t, "rpm", modules[0].Type)
+}
+
+func TestListModulesDistro(t *testing.T) {
+	distros, r, err := testState.client.ListDistros()
+	require.Nil(t, err)
+	require.Nil(t, r)
+	assert.GreaterOrEqual(t, len(distros), 1)
+
+	modules, r, err := testState.client.ListModules(distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, modules)

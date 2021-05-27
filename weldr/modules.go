@@ -12,8 +12,15 @@ import (
 
 // ListModules returns a list of all of the modules available
 // NOTE: These are just packages, the server does not support modules directly
-func (c Client) ListModules() ([]ModuleV0, *APIResponse, error) {
-	body, resp, err := c.GetJSONAll("/modules/list")
+func (c Client) ListModules(distro string) ([]ModuleV0, *APIResponse, error) {
+	var route string
+	if len(distro) > 0 {
+		route = fmt.Sprintf("/modules/list?distro=%s", distro)
+	} else {
+		route = "/modules/list"
+	}
+
+	body, resp, err := c.GetJSONAll(route)
 	if resp != nil || err != nil {
 		return nil, resp, err
 	}
