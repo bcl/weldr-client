@@ -7,6 +7,8 @@
 package weldr
 
 import (
+	"bytes"
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -97,4 +99,66 @@ func TestProjectsInfoMultipleOneErrorDistro(t *testing.T) {
 	require.Nil(t, r)
 	require.NotNil(t, projects)
 	assert.Equal(t, 2, len(projects))
+}
+
+func TestDepsolveProjects(t *testing.T) {
+	deps, errors, err := testState.client.DepsolveProjects([]string{"bash"}, "")
+	require.Nil(t, err)
+	require.Nil(t, errors)
+	require.NotNil(t, deps)
+	require.GreaterOrEqual(t, len(deps), 1)
+
+	// Decode a bit of the response for testing
+	type projectDeps struct {
+		Name string
+	}
+
+	// Encode it using json
+	data := new(bytes.Buffer)
+	err = json.NewEncoder(data).Encode(deps)
+	require.Nil(t, err)
+
+	// Decode the parts we care about
+	var projects []projectDeps
+	err = json.Unmarshal(data.Bytes(), &projects)
+	require.Nil(t, err)
+
+	// Do not depend on exact version numbers for dependencies, just check some package names
+	var names []string
+	for _, p := range projects {
+		names = append(names, p.Name)
+	}
+	assert.Contains(t, names, "bash")
+	assert.Contains(t, names, "filesystem")
+}
+
+func TestDepsolveProjectsDistro(t *testing.T) {
+	deps, errors, err := testState.client.DepsolveProjects([]string{"bash"}, testState.distros[0])
+	require.Nil(t, err)
+	require.Nil(t, errors)
+	require.NotNil(t, deps)
+	require.GreaterOrEqual(t, len(deps), 1)
+
+	// Decode a bit of the response for testing
+	type projectDeps struct {
+		Name string
+	}
+
+	// Encode it using json
+	data := new(bytes.Buffer)
+	err = json.NewEncoder(data).Encode(deps)
+	require.Nil(t, err)
+
+	// Decode the parts we care about
+	var projects []projectDeps
+	err = json.Unmarshal(data.Bytes(), &projects)
+	require.Nil(t, err)
+
+	// Do not depend on exact version numbers for dependencies, just check some package names
+	var names []string
+	for _, p := range projects {
+		names = append(names, p.Name)
+	}
+	assert.Contains(t, names, "bash")
+	assert.Contains(t, names, "filesystem")
 }

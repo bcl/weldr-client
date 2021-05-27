@@ -55,3 +55,40 @@ func (c Client) ProjectsInfo(projs []string, distro string) ([]ProjectV0, *APIRe
 	}
 	return r.Projects, resp, nil
 }
+
+// DepsolveProjects returns the dependencies of all the projects passed to it
+// It uses interface{} for the response so that it is not tightly coupled to the server's response
+// schema.
+func (c Client) DepsolveProjects(names []string, distro string) (deps []interface{}, errors []APIErrorMsg, err error) {
+	route := fmt.Sprintf("/projects/depsolve/%s", strings.Join(names, ","))
+	if len(distro) > 0 {
+		route = fmt.Sprintf("%s?distro=%s", route, distro)
+	}
+
+	j, resp, err := c.GetRaw("GET", route)
+	if err != nil {
+		return nil, nil, err
+	}
+	if resp != nil {
+		errors = append(errors, resp.Errors...)
+		return nil, errors, nil
+	}
+
+	// flexible response unmarshaling, be strict about the error message
+	var r struct {
+		Projects []interface{}
+		Errors   []APIErrorMsg
+	}
+	err = json.Unmarshal(j, &r)
+	if err != nil {
+		errors = append(errors, APIErrorMsg{"JSONError", err.Error()})
+	}
+	if len(errors) > 0 {
+		return nil, errors, nil
+	}
+	if len(r.Errors) > 0 {
+		errors = append(errors, r.Errors...)
+	}
+
+	return r.Projects, errors, nil
+}
