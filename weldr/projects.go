@@ -32,8 +32,12 @@ func (c Client) ListProjects(distro string) ([]ProjectV0, *APIResponse, error) {
 }
 
 // ProjectsInfo returns a list of detailed info about the projects
-func (c Client) ProjectsInfo(projs []string) ([]ProjectV0, *APIResponse, error) {
+func (c Client) ProjectsInfo(projs []string, distro string) ([]ProjectV0, *APIResponse, error) {
 	route := fmt.Sprintf("/projects/info/%s", strings.Join(projs, ","))
+	if len(distro) > 0 {
+		route = fmt.Sprintf("%s?distro=%s", route, distro)
+	}
+
 	j, resp, err := c.GetRaw("GET", route)
 	if err != nil {
 		return nil, nil, err

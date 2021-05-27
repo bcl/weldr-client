@@ -30,7 +30,15 @@ func TestListProjectsDistro(t *testing.T) {
 }
 
 func TestProjectsInfo(t *testing.T) {
-	projects, r, err := testState.client.ProjectsInfo([]string{"bash"})
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, projects)
+	assert.Equal(t, 1, len(projects))
+}
+
+func TestProjectsInfoDistro(t *testing.T) {
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, projects)
@@ -38,7 +46,15 @@ func TestProjectsInfo(t *testing.T) {
 }
 
 func TestProjectsInfoMultiple(t *testing.T) {
-	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "tmux"})
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "tmux"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, projects)
+	assert.Equal(t, 3, len(projects))
+}
+
+func TestProjectsInfoMultipleDistro(t *testing.T) {
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "tmux"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, projects)
@@ -46,7 +62,18 @@ func TestProjectsInfoMultiple(t *testing.T) {
 }
 
 func TestProjectsInfoOneError(t *testing.T) {
-	projects, r, err := testState.client.ProjectsInfo([]string{"bart"})
+	projects, r, err := testState.client.ProjectsInfo([]string{"bart"}, "")
+	require.Nil(t, err)
+	require.NotNil(t, r)
+	require.Nil(t, projects)
+	assert.Equal(t, false, r.Status)
+	assert.Equal(t, 1, len(r.Errors))
+	assert.Equal(t, "UnknownProject", r.Errors[0].ID)
+	assert.Equal(t, "No packages have been found.", r.Errors[0].Msg)
+}
+
+func TestProjectsInfoOneErrorDistro(t *testing.T) {
+	projects, r, err := testState.client.ProjectsInfo([]string{"bart"}, testState.distros[0])
 	require.Nil(t, err)
 	require.NotNil(t, r)
 	require.Nil(t, projects)
@@ -57,7 +84,15 @@ func TestProjectsInfoOneError(t *testing.T) {
 }
 
 func TestProjectsInfoMultipleOneError(t *testing.T) {
-	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "bart"})
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "bart"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, projects)
+	assert.Equal(t, 2, len(projects))
+}
+
+func TestProjectsInfoMultipleOneErrorDistro(t *testing.T) {
+	projects, r, err := testState.client.ProjectsInfo([]string{"bash", "filesystem", "bart"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, projects)
