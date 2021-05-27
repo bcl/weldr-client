@@ -24,6 +24,7 @@ type TestState struct {
 	apiVersion int
 	repoDir    string
 	unitTest   bool
+	distros    []string
 }
 
 func setUpTestState(socketPath string, unitTest bool) (*TestState, error) {

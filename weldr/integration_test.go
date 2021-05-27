@@ -170,6 +170,15 @@ func executeTests(m *testing.M) int {
 
 	// TODO Push test source(s)
 
+	// Get the list of distros for use in the tests
+	testState.distros, resp, err = testState.client.ListDistros()
+	if err != nil {
+		panic(err)
+	}
+	if resp != nil {
+		panic(errors.New("ListDistro failed"))
+	}
+
 	// Run the tests
 	return m.Run()
 }
