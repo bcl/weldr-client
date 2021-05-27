@@ -14,7 +14,15 @@ import (
 )
 
 func TestListProjects(t *testing.T) {
-	projects, r, err := testState.client.ListProjects()
+	projects, r, err := testState.client.ListProjects("")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, projects)
+	assert.GreaterOrEqual(t, len(projects), 2)
+}
+
+func TestListProjectsDistro(t *testing.T) {
+	projects, r, err := testState.client.ListProjects(testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, projects)

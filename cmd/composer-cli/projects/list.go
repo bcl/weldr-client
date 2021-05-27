@@ -19,14 +19,16 @@ var (
 		Long:  "List available projects",
 		RunE:  list,
 	}
+	distro string
 )
 
 func init() {
+	listCmd.Flags().StringVarP(&distro, "distro", "", "", "Return results for distribution")
 	projectsCmd.AddCommand(listCmd)
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	projects, resp, err := root.Client.ListProjects()
+	projects, resp, err := root.Client.ListProjects(distro)
 	if root.JSONOutput {
 		return nil
 	}

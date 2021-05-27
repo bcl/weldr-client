@@ -11,8 +11,15 @@ import (
 )
 
 // ListProjects returns a list of all of the projects available
-func (c Client) ListProjects() ([]ProjectV0, *APIResponse, error) {
-	body, resp, err := c.GetJSONAll("/projects/list")
+func (c Client) ListProjects(distro string) ([]ProjectV0, *APIResponse, error) {
+	var route string
+	if len(distro) > 0 {
+		route = fmt.Sprintf("/projects/list?distro=%s", distro)
+	} else {
+		route = "/projects/list"
+	}
+
+	body, resp, err := c.GetJSONAll(route)
 	if resp != nil || err != nil {
 		return nil, resp, err
 	}
