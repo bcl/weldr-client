@@ -23,12 +23,7 @@ func TestListModules(t *testing.T) {
 }
 
 func TestListModulesDistro(t *testing.T) {
-	distros, r, err := testState.client.ListDistros()
-	require.Nil(t, err)
-	require.Nil(t, r)
-	assert.GreaterOrEqual(t, len(distros), 1)
-
-	modules, r, err := testState.client.ListModules(distros[0])
+	modules, r, err := testState.client.ListModules(testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, modules)
@@ -37,7 +32,16 @@ func TestListModulesDistro(t *testing.T) {
 }
 
 func TestModulesInfo(t *testing.T) {
-	modules, r, err := testState.client.ModulesInfo([]string{"bash"})
+	modules, r, err := testState.client.ModulesInfo([]string{"bash"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, modules)
+	assert.Equal(t, 1, len(modules))
+	assert.GreaterOrEqual(t, len(modules[0].Dependencies), 1)
+}
+
+func TestModulesInfoDistro(t *testing.T) {
+	modules, r, err := testState.client.ModulesInfo([]string{"bash"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, modules)
@@ -46,7 +50,18 @@ func TestModulesInfo(t *testing.T) {
 }
 
 func TestModulesInfoMultiple(t *testing.T) {
-	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "tmux"})
+	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "tmux"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, modules)
+	assert.Equal(t, 3, len(modules))
+	for i := range modules {
+		assert.GreaterOrEqual(t, len(modules[i].Dependencies), 1)
+	}
+}
+
+func TestModulesInfoMultipleDistro(t *testing.T) {
+	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "tmux"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, modules)
@@ -57,7 +72,7 @@ func TestModulesInfoMultiple(t *testing.T) {
 }
 
 func TestModulesInfoOneError(t *testing.T) {
-	modules, r, err := testState.client.ModulesInfo([]string{"bart"})
+	modules, r, err := testState.client.ModulesInfo([]string{"bart"}, "")
 	require.Nil(t, err)
 	require.NotNil(t, r)
 	require.Nil(t, modules)
@@ -68,7 +83,18 @@ func TestModulesInfoOneError(t *testing.T) {
 }
 
 func TestModulesInfoMultipleOneError(t *testing.T) {
-	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "bart"})
+	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "bart"}, "")
+	require.Nil(t, err)
+	require.Nil(t, r)
+	require.NotNil(t, modules)
+	assert.Equal(t, 2, len(modules))
+	for i := range modules {
+		assert.GreaterOrEqual(t, len(modules[i].Dependencies), 1)
+	}
+}
+
+func TestModulesInfoMultipleOneErrorDistro(t *testing.T) {
+	modules, r, err := testState.client.ModulesInfo([]string{"bash", "filesystem", "bart"}, testState.distros[0])
 	require.Nil(t, err)
 	require.Nil(t, r)
 	require.NotNil(t, modules)

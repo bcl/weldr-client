@@ -33,8 +33,13 @@ func (c Client) ListModules(distro string) ([]ModuleV0, *APIResponse, error) {
 }
 
 // ModulesInfo returns a list of detailed info about the modules, including deps
-func (c Client) ModulesInfo(names []string) ([]ProjectV0, *APIResponse, error) {
+func (c Client) ModulesInfo(names []string, distro string) ([]ProjectV0, *APIResponse, error) {
 	route := fmt.Sprintf("/modules/info/%s", strings.Join(names, ","))
+
+	if len(distro) > 0 {
+		route = fmt.Sprintf("%s?distro=%s", route, distro)
+	}
+
 	j, resp, err := c.GetRaw("GET", route)
 	if err != nil {
 		return nil, nil, err

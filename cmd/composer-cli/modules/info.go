@@ -24,13 +24,14 @@ var (
 )
 
 func init() {
+	infoCmd.Flags().StringVarP(&distro, "distro", "", "", "Return results for distribution")
 	modulesCmd.AddCommand(infoCmd)
 }
 
 func info(cmd *cobra.Command, args []string) error {
 	names := root.GetCommaArgs(args)
 
-	modules, resp, err := root.Client.ModulesInfo(names)
+	modules, resp, err := root.Client.ModulesInfo(names, distro)
 	if root.JSONOutput {
 		return nil
 	}
