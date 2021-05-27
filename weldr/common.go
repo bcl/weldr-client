@@ -211,7 +211,7 @@ func (c Client) GetJSONAll(path string) ([]byte, *APIResponse, error) {
 // there are, and this value is then used in a second call to retrieve
 // all of them.
 func (c Client) GetJSONAllFnTotal(path string, fn func([]byte) (float64, error)) ([]byte, *APIResponse, error) {
-	body, api, err := c.GetRaw("GET", path+"?limit=0")
+	body, api, err := c.GetRaw("GET", AppendQuery(path, "limit=0"))
 	if api != nil || err != nil {
 		return nil, api, err
 	}
@@ -221,8 +221,7 @@ func (c Client) GetJSONAllFnTotal(path string, fn func([]byte) (float64, error))
 		return nil, nil, err
 	}
 
-	allResults := fmt.Sprintf("%s?limit=%v", path, total)
-	return c.GetRaw("GET", allResults)
+	return c.GetRaw("GET", AppendQuery(path, fmt.Sprintf("limit=%v", total)))
 }
 
 // GetFile writes a to a temporary file and returns the path, content-disposition, and content-type
@@ -404,4 +403,13 @@ func MoveFile(src, dst string) error {
 		os.Remove(src)
 	}
 	return err
+}
+
+// AppendQuery adds the query string to the current url using ? for the first and & for subsequent ones
+func AppendQuery(url, query string) string {
+	if strings.Contains(url, "?") {
+		return url + "&" + query
+	}
+
+	return url + "?" + query
 }

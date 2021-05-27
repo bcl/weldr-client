@@ -976,3 +976,8 @@ func TestMoveFileError(t *testing.T) {
 	err := MoveFile("/tmp/no-such-testfile", "/tmp/no-such-destfile")
 	require.NotNil(t, err)
 }
+
+func TestAppendQuery(t *testing.T) {
+	assert.Equal(t, "/route/to/moes?bus=1", AppendQuery("/route/to/moes", "bus=1"))
+	assert.Equal(t, "/route/to/moes?bus=0&taxi=1", AppendQuery("/route/to/moes?bus=0", "taxi=1"))
+}
