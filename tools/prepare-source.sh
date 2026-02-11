@@ -3,7 +3,7 @@
 set -eux
 
 # Pin Go and toolbox versions at a reasonable version
-go get go@1.22.6 toolchain@1.22.6
+go get go@1.24.12 toolchain@1.24.12
 
 # Update go.mod and go.sum:
 go mod tidy

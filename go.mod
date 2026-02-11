@@ -1,6 +1,6 @@
 module github.com/osbuild/weldr-client/v2
 
-go 1.22.6
+go 1.24.12
 
 require (
 	github.com/BurntSushi/toml v1.6.0
