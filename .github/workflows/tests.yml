@@ -21,11 +21,14 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
-          go-version: "${{matrix.go}}"
-      - name: Install golangci-lint
-        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.3.0
-      - name: Run lint checks on the source with Go ${{matrix.go}}
-        run: make check
+          go-version: "${{ matrix.go }}"
+      - name: Run go vet
+        run: go vet ./...
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.9
+          args: --build-tags=integration
 
   unit-tests:
     strategy:
