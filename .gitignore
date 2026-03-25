@@ -4,3 +4,5 @@ weldr-client-*.tar.gz
 container_cli_built.info
 weldr-client.spec
 rpmbuild/
+clog
+gpg-*.key

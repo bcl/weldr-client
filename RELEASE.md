@@ -54,16 +54,21 @@ click on 'Publish release'
 
 ## Create a Fedora release
 
-Run `make weldr-client.spec` to generate a new .spec file that includes the
-changelog.  Copy it to your weldr-client dist-git repo.  Also copy the
-`gpg-KEYID.key` file if it isn't already there.
+Run `make weldr-client.spec` to generate a new .spec file. The changelog is in
+`./clog` and should be used as the commit message for the spec change.  Copy
+the new `weldr-client.spec` and `./clog` to your weldr-client dist-git repo.
+Also copy the `gpg-KEYID.key` file if it isn't already there.
 
-Add the archive, signature, and public key:
+In the dist-git repo update the vendor archive. This requires that the
+`go-vendor-tools` package be installed. Run this to create the vendor archive:
 
-    fedpkg new-sources weldr-client-35.6.tar.gz* gpg-*key
+    make update-vendor
 
-Generate commit message with `fedpkg clog --raw` and edit it to your liking.  Commit the
-changes with `git add -u && git commit -F clog`.
+Add the source archive, vendor archive, signature, and public key:
+
+    fedpkg new-sources weldr-client-36.1.tar.gz* weldr-client-36.1-vendor.tar.bz2 gpg-*key
+
+Commit the changes with `git add -u && git commit -F clog`.
 
 Check that the changes look ok with `git show`, do a mock build with `fedpkg mockbuild`
 and if that all looks ok, push and build:

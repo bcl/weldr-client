@@ -36,7 +36,8 @@ install-tests: composer-cli-tests
 
 weldr-client.spec: weldr-client.spec.in
 	sed -e "s/%%VERSION%%/$(VERSION)/g" -e "s/%%GPGKEY%%/$(GPGKEY)/g" < $< > $@
-	$(MAKE) -s changelog >> $@
+	$(MAKE) -s changelog >> clog
+	@echo "Use the contents of ./clog when committing the new spec file"
 
 tag:
 	@if [ -z "$(GPGKEY)" ]; then echo "ERROR: The git config user.signingkey must be set" ; exit 1; fi
