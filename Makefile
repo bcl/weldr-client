@@ -68,6 +68,11 @@ bumpver:
 archive:
 	git archive --prefix=weldr-client-$(VERSION)/ --format=tar.gz HEAD > weldr-client-$(VERSION).tar.gz
 
+vendor-archive:
+	go_vendor_archive create --config ./tools/go-vendor-tools.toml weldr-client.spec
+	go_vendor_license --config ./tools/go-vendor-tools.toml --path weldr-client.spec \
+		report --update-spec --prompt --autofill=auto
+
 RPM_SPECFILE=rpmbuild/SPECS/weldr-client.spec
 RPM_TARBALL=rpmbuild/SOURCES/weldr-client-$(VERSION).tar.gz
 RPM_TARBALL_SIG=rpmbuild/SOURCES/weldr-client-$(VERSION).tar.gz.asc
@@ -76,9 +81,10 @@ $(RPM_SPECFILE): weldr-client.spec
 	mkdir -p $(CURDIR)/rpmbuild/SPECS
 	cp weldr-client.spec $(CURDIR)/rpmbuild/SPECS
 
-$(RPM_TARBALL): archive sign
+$(RPM_TARBALL): archive vendor-archive sign
 	mkdir -p $(CURDIR)/rpmbuild/SOURCES
-	cp weldr-client-$(VERSION).tar.gz* gpg-$(GPGKEY).key rpmbuild/SOURCES/
+	cp weldr-client-$(VERSION).tar.gz* weldr-client-$(VERSION)-vendor.tar.bz2 \
+	       gpg-$(GPGKEY).key ./tools/go-vendor-tools.toml rpmbuild/SOURCES/
 
 builddep: $(RPM_SPECFILE)
 	dnf builddep -y -D 'with 1' $(RPM_SPECFILE)
@@ -97,9 +103,10 @@ rpm: $(RPM_SPECFILE) $(RPM_TARBALL)
 		--with tests \
 		$(RPM_SPECFILE)
 
-scratch-srpm: $(RPM_SPECFILE) archive
+scratch-srpm: $(RPM_SPECFILE) archive vendor-archive
 	mkdir -p $(CURDIR)/rpmbuild/SOURCES
-	cp weldr-client-$(VERSION).tar.gz* rpmbuild/SOURCES/
+	cp weldr-client-$(VERSION).tar.gz* weldr-client-$(VERSION)-vendor.tar.bz2 \
+		 ./tools/go-vendor-tools.toml rpmbuild/SOURCES/
 	rpmbuild -bs \
 		--define "_topdir $(CURDIR)/rpmbuild" \
 		--define "commit $(VERSION)" \
@@ -107,9 +114,10 @@ scratch-srpm: $(RPM_SPECFILE) archive
 		--without signed \
 		$(RPM_SPECFILE)
 
-scratch-rpm: $(RPM_SPECFILE) archive
+scratch-rpm: $(RPM_SPECFILE) archive vendor-archive
 	mkdir -p $(CURDIR)/rpmbuild/SOURCES
-	cp weldr-client-$(VERSION).tar.gz* rpmbuild/SOURCES/
+	cp weldr-client-$(VERSION).tar.gz* weldr-client-$(VERSION)-vendor.tar.bz2 \
+		 ./tools/go-vendor-tools.toml rpmbuild/SOURCES/
 	rpmbuild -bb \
 		--define "_topdir $(CURDIR)/rpmbuild" \
 		--define "commit $(VERSION)" \

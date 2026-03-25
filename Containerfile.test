@@ -1,5 +1,6 @@
 FROM registry.fedoraproject.org/fedora:rawhide
-RUN dnf -y install make tar python3-dnf-plugins-core go-rpm-macros git rpm-build dnf5-plugins
+RUN dnf -y install make tar python3-dnf-plugins-core \
+go-rpm-macros git rpm-build dnf5-plugins go-vendor-tools
 ARG VERSION
 COPY weldr-client-*.tar.gz .
 RUN mkdir /source && tar --strip=1 -C /source -xvf weldr-client-*.tar.gz
